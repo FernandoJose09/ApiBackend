@@ -39,16 +39,16 @@ namespace reportesApi.Services
             try
             {
                 parametros = new ArrayList();
-                DataSet ds = dac.Fill("sp_get_recetas", parametros);
+                DataSet ds = dac.Fill("GetRecetas", parametros);
                 if (ds.Tables[0].Rows.Count > 0)
                 {
 
                   lista = ds.Tables[0].AsEnumerable()
                     .Select(dataRow => new GetRecetasModel {
                         Id = int.Parse(dataRow["Id"].ToString()),
-                        Usuarioregistra = dataRow["UsuarioRegistra"].ToString(),
+                        Usuarioregistra = int.Parse(dataRow["UsuarioRegistra"].ToString()),
                         Nombre = dataRow["Nombre"].ToString(),
-                        Estatus = dataRow["Estatus"].ToString(),
+                        Estatus = int.Parse(dataRow["Estatus"].ToString()),
                         FechaCreacion= dataRow["FechaCreacion"].ToString()
                     }).ToList();
                 }
@@ -66,18 +66,14 @@ namespace reportesApi.Services
             parametros = new ArrayList();
             string mensaje;
 
-            parametros.Add(new SqlParameter { ParameterName = "@Usuario", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Usuario });
-            parametros.Add(new SqlParameter { ParameterName = "@Nombre", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Nombre});
-            parametros.Add(new SqlParameter { ParameterName = "@Direccion", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Direccion});
-            parametros.Add(new SqlParameter { ParameterName = "@Email", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Email});
-            parametros.Add(new SqlParameter { ParameterName = "@RFC", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.RFC});
-            parametros.Add(new SqlParameter { ParameterName = "@PlazoPago", SqlDbType = System.Data.SqlDbType.Int, Value = Proveedor.PlazoPago});
-            parametros.Add(new SqlParameter { ParameterName = "@PorcentajeRetencion", SqlDbType = System.Data.SqlDbType.Decimal, Value = Proveedor.PorcentajeRetencion});
-
+            parametros.Add(value: new SqlParameter { ParameterName = "@UsuarioRegistra", SqlDbType = System.Data.SqlDbType.Int, Value = Receta.UsuarioRegistra });
+            parametros.Add(new SqlParameter { ParameterName = "@Nombre", SqlDbType = System.Data.SqlDbType.VarChar, Value = Receta.Nombre});
+            parametros.Add(new SqlParameter { ParameterName = "@Estatus", SqlDbType = System.Data.SqlDbType.Int, Value = 0});
+           
 
             try
             {
-                DataSet ds = dac.Fill("sp_insert_proveedores", parametros);
+                DataSet ds = dac.Fill("InsertReceta", parametros);
                 mensaje = ds.Tables[0].AsEnumerable().Select(dataRow => dataRow["mensaje"].ToString()).ToList()[0];
             }
             catch (Exception ex)
@@ -87,26 +83,21 @@ namespace reportesApi.Services
             return mensaje;
         }
 
-        public string UpdateProveedor(UpdateProveedorModel Proveedor)
+        public string UpdateReceta(UpdateRecetaModel Receta)
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
             string mensaje;
 
 
-            parametros.Add(new SqlParameter { ParameterName = "@IdProveedor", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.IdProveedor });
-            parametros.Add(new SqlParameter { ParameterName = "@Usuario", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Usuario });
-            parametros.Add(new SqlParameter { ParameterName = "@Nombre", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Nombre});
-            parametros.Add(new SqlParameter { ParameterName = "@Direccion", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Direccion});
-            parametros.Add(new SqlParameter { ParameterName = "@Email", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.Email});
-            parametros.Add(new SqlParameter { ParameterName = "@RFC", SqlDbType = System.Data.SqlDbType.VarChar, Value = Proveedor.RFC});
-            parametros.Add(new SqlParameter { ParameterName = "@PlazoPago", SqlDbType = System.Data.SqlDbType.Int, Value = Proveedor.PlazoPago });
-            parametros.Add(new SqlParameter { ParameterName = "@PorcentajeRetencion", SqlDbType = System.Data.SqlDbType.Decimal, Value = Proveedor.PorcentajeRetencion });
+            parametros.Add(new SqlParameter { ParameterName = "@Id", SqlDbType = System.Data.SqlDbType.Int, Value = 0});
+            parametros.Add(new SqlParameter { ParameterName = "@Nombre", SqlDbType = System.Data.SqlDbType.VarChar, Value = Receta.Nombre});
+            parametros.Add(new SqlParameter { ParameterName = "@Estatus", SqlDbType = System.Data.SqlDbType.Int, Value = 0});
 
 
             try
             {
-                DataSet ds = dac.Fill("sp_update_proveedores", parametros);
+                DataSet ds = dac.Fill("UpdateReceta", parametros);
                 mensaje = ds.Tables[0].AsEnumerable().Select(dataRow => dataRow["mensaje"].ToString()).ToList()[0];
             }
             catch (Exception ex)
@@ -117,16 +108,16 @@ namespace reportesApi.Services
             return mensaje;
         }
 
-        public void DeleteProveedor(int id)
+        public void DeleteReceta(int id)
         {
             ConexionDataAccess dac = new ConexionDataAccess(connection);
             parametros = new ArrayList();
-            parametros.Add(new SqlParameter { ParameterName = "@IdProveedor", SqlDbType = SqlDbType.Int, Value = id });
+            parametros.Add(new SqlParameter { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = id });
 
 
             try
             {
-                dac.ExecuteNonQuery("sp_delete_proveedores", parametros);
+                dac.ExecuteNonQuery("DeleteReceta", parametros);
             }
             catch (Exception ex)
             {

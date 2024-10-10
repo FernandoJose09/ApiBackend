@@ -63,8 +63,8 @@ namespace reportesApi.Controllers
             return new JsonResult(objectResponse);
         }
 
-        [HttpGet("GetReceta")]
-        public IActionResult GetReceta()
+        [HttpGet("GetRecetas")]
+        public IActionResult GetRecetas()
         {
             var objectResponse = Helper.GetStructResponse();
             var resultado = _RecetaService.GetRecetas();
